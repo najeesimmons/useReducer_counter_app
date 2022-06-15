@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
-import { useState } from 'react'
+import "./App.css";
+import { useState, useReducer } from "react";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "ADD-TODO":
+      return { todos : [...state.todos, { text: action.text, completed: false }] };
+    default:
+      return state;
+  }
+}
 
 function App() {
+  const [{ todos }, dispatch] = useReducer(reducer, { todos: [] });
+  const [text, setText] = useState();
 
-  const [count, setCount] = useState(0)
-
-  const decrement = ((prevCount) => {
-    setCount(prevCount - 1)
-  })
-
-  const increment = ((prevCount) => {
-    setCount(prevCount + 1)
-  })
-  
   return (
     <>
-      <button onClick={decrement}>-</button>
-      <span>{count}</span>
-      <button onClick={increment}>+</button>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          dispatch({ type: "ADD-TODO", text });
+          setText('')
+        }}
+      >
+        <input value={text} onChange={e => setText(e.target.value)} />
+      </form>
+      <pre>{JSON.stringify(todos, null, 2)}</pre>
     </>
   );
 }
